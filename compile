@@ -1,0 +1,8 @@
+#!/bin/bash
+cd  ..
+
+# Compile the project without changes
+MYPYPATH=./Linefind/typings mypy  Linefind/Linefind.py
+
+# Watch for changes and compile the project each time
+MYPYPATH=./Linefind/typings chokidar "./Linefind/**/*.py" -c "mypy  Linefind/Linefind.py"
