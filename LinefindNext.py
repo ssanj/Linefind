@@ -1,23 +1,34 @@
 import sublime
 import sublime_plugin
-from typing import Optional
+from typing import Optional, Dict, Any
 from . import regions_index as RI
 from . import linefind_setting as SETTING
 from . import settings_loader as SETTING_LOADER
+from . import direction as D
 
 class LinefindNextCommand(sublime_plugin.TextCommand):
 
   print("LinefindNext Text command has loaded.")
 
-  def run(self, edit: sublime.Edit) -> None:
+  def run(self, edit: sublime.Edit,  **args: Dict[str, Any]) -> None:
     if self and self.view:
-      self.log("LinefindNext is running")
       self.settings: SETTING.LinefindSetting = self.load_settings()
+      self.log("LinefindNext is running")
+      self.debug(f"argument: {args}")
+      self.set_direction(args)
       self.debug(f'settings: {self.settings}')
       if self.view:
         self.on_next(self.view)
     else:
       sublime.message_dialog("Could not initialise plugin")
+
+  def set_direction(self, args: Dict[str, Any]):
+    if "direction" in args and args['direction'] == "prev":
+      self.direction = D.Direction.Previous
+      return
+
+    self.direction = D.Direction.Next
+
 
   def on_next(self, view:sublime.View):
       if view.settings() and "Linefind" in view.settings():
@@ -25,7 +36,11 @@ class LinefindNextCommand(sublime_plugin.TextCommand):
         if index_str:
           self.debug(f'regionIndex from view: {str(index_str)}')
           regions_index = RI.RegionsIndex.from_json_str(index_str)
-          region = regions_index.next()
+          if self.direction == D.Direction.Next:
+            region = regions_index.next()
+          else:
+            region = regions_index.prev()
+
           self.debug(f'next position : {str(region)}')
 
           view.sel().clear()

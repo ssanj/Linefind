@@ -1,3 +1,5 @@
 [
-  { "keys": ["super+home"], "command": "linefind"},
+  { "keys": ["shift+ctrl+g"], "command": "linefind" },
+  { "keys": ["shift+super+="], "command": "linefind_next", "args": { "direction": "next" } },
+  { "keys": ["shift+super+-"], "command": "linefind_next", "args": { "direction": "prev" } },
 ]

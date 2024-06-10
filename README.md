@@ -15,5 +15,4 @@
 
 ## Functionality
 
-
-**TODO**
+Lets you search for some text on a given line.

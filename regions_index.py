@@ -14,10 +14,18 @@ class RegionsIndex:
     return self.regions[self.pos]
 
   def next(self) -> sublime.Region:
-    # TODO: Change so we don't overflow. Maybe constraint to a max(len(regions))
     self.pos += 1
-    rindex = self.pos % self.length
-    return self.regions[rindex]
+    if self.pos >= self.length:
+      self.pos = 0
+
+    return self.regions[self.pos]
+
+  def prev(self) -> sublime.Region:
+    self.pos -= 1
+    if self.pos < 0:
+      self.pos = self.length - 1
+
+    return self.regions[self.pos]
 
   def as_json_str(self):
     regions = [(r.begin(), r.end()) for r in self.regions]

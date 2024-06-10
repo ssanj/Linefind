@@ -1,4 +1,5 @@
 [
     { "caption": "Linefind: Finds text on a given line number", "command": "linefind" },
-    { "caption": "LinefindNext: Finds next match on a given line number", "command": "linefind_next" },
+    { "caption": "LinefindNext: Finds next match on a given line number", "command": "linefind_next", "args": { "direction": "next" }},
+    { "caption": "LinefindPrev: Finds previous match on a given line number", "command": "linefind_next", "args": { "direction": "prev" }},
 ]

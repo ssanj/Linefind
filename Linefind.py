@@ -9,9 +9,8 @@ class LinefindCommand(sublime_plugin.TextCommand):
 
   print("Linefind Text command has loaded.")
 
-
   def run(self, edit: sublime.Edit) -> None:
-    if self and self.view:
+    if self and self.view and self.view.window():
       self.log("Linefind is running")
       self.settings: SETTING.LinefindSetting = self.load_settings()
       self.debug(f'settings: {self.settings}')
