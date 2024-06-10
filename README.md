@@ -16,3 +16,5 @@
 ## Functionality
 
 Lets you search for some text on a given line.
+
+![Linefind](linefind.png)
