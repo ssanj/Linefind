@@ -1,12 +1,14 @@
 import sublime
 import sublime_plugin
-from typing import Optional, List
+from typing import Optional
 from . import linefind_setting as SETTING
 from . import settings_loader as SETTING_LOADER
+from . import regions_index as REGIONS_INDEX
 
 class LinefindCommand(sublime_plugin.TextCommand):
 
   print("Linefind Text command has loaded.")
+
 
   def run(self, edit: sublime.Edit) -> None:
     if self and self.view:
@@ -20,22 +22,34 @@ class LinefindCommand(sublime_plugin.TextCommand):
   def on_search(self, view:sublime.View, term: str):
     terms = term.split(":", maxsplit = 1)
     if len(terms) == 2:
+      try:
+        int(terms[0])
+      except:
+        sublime.message_dialog("Invalid line number provided")
+        return
+
       line = int(terms[0])
-      search_term = terms[1]
+      search_term = terms[1] # TODO: Handle empty searches
+
       matched_regions = view.find_all(search_term)
       matched_line = [r for r in matched_regions if view.rowcol(r.begin())[0] + 1 == line]
       if matched_line:
-        result = matched_line[0]
-        view.sel().clear()
-        view.sel().add(result)
-        view.show_at_center(result)
+        if view.settings():
+          regionsIndex = REGIONS_INDEX.RegionsIndex(matched_line)
+          view.settings().set("Linefind", regionsIndex.as_json_str())
+          self.debug(f'setting regionsIndex in view: {str(regionsIndex)}')
+
+          view.sel().clear()
+          view.sel().add(regionsIndex.current())
+          self.debug(f'regionIndex in view: {str(view.settings().get("Linefind"))}')
+          view.show_at_center(matched_line[0])
       else:
         self.log(f'Could not find {search_term} on line {line}')
     else:
       self.log(f'Could not parse search text: {term}')
 
   def on_cancel(self):
-    sublime.message_dialog("you canceled")
+    sublime.message_dialog("you cancelled")
 
   def is_enabled(self) -> bool:
     return True
